@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,8 +17,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+
 import com.vaescode.apirestpedido.entity.Pedido;
 import com.vaescode.apirestpedido.service.PedidoService;
+import com.vaescode.apirestpedido.util.InvalidDataException;
 
 @RestController
 @RequestMapping("/api")
@@ -28,6 +32,7 @@ public class PedidoController {
 	@Autowired
 	PedidoService pedidoService;
 
+	/*
 	@PostMapping(path = "/crear/pedido")
 	public ResponseEntity<?> crearPedido(@RequestBody Pedido pedido) {
 
@@ -40,7 +45,19 @@ public class PedidoController {
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+*/
+	
+	@PostMapping(path = "/crear/pedido")
+	public ResponseEntity<?> crearPedido(@RequestBody Pedido pedido, BindingResult result) {
+		
+		if (result.hasErrors()) {
+			  throw new InvalidDataException(result);
+			}
+			Pedido nuevoPedido = pedidoService.save(pedido);
+			log.info("Creando pedido con data {}", pedido);
+			return new ResponseEntity<>(nuevoPedido, HttpStatus.CREATED);
+		
+	}
 	@GetMapping(path = "/pedidos")
 	public ResponseEntity<?> listarPedidos() {
 		log.info("Listando todos los pedidos");

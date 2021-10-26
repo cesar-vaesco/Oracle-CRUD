@@ -11,6 +11,8 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "pedidos")
@@ -20,9 +22,15 @@ public class Pedido {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@Column(nullable = false, length = 50)
+	@NotNull(message = "El nombre no puede ser nulo")
+	@Size(min = 2, message = "El nombre debe de tener más de dos caracteres")
 	private String articulo;
 	
-	
+
+	@Column(nullable = false, length = 50, unique = true)
+	@NotNull(message = "Se requiere descripción del árticulo")
+	@Size(min = 2, message = "El descripción debe tener al menos dos caracteres")
 	private String descripcion;
 	private Double costo;
 	
