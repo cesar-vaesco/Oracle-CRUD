@@ -52,13 +52,15 @@ public class PedidoController {
 	@GetMapping(path = "/pedido/{id}")
 	public ResponseEntity<?> listarPedido(@PathVariable("id") Long pedidoId) {
 		// Optional<Usuario> opt = usuarioRepository.findById(id);
-		Optional<Pedido> pedidoDB = Optional.of(pedidoService.findById(pedidoId));
+		// Optional<Pedido> pedidoDB = Optional.of(pedidoService.findById(pedidoId));
+		Pedido pedidoActual = pedidoService.findById(pedidoId);
 
-		if (pedidoDB.isPresent()) {
-			log.info("Obteniendo inspeccion con id {}", pedidoId);
-			return new ResponseEntity<>(pedidoDB, HttpStatus.OK);
-		} else {
+		if (pedidoActual == null) {
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		} else {
+			log.info("Obteniendo inspeccion con id {}", pedidoId);
+			return new ResponseEntity<>(pedidoActual, HttpStatus.OK);
+
 		}
 
 	}
@@ -91,11 +93,7 @@ public class PedidoController {
 	public ResponseEntity<?> actualizarPedido(@RequestBody Pedido pedido, @PathVariable("id") Long pedidoId) {
 
 		Pedido pedidoActual = pedidoService.findById(pedidoId);
-	    Pedido pedidoActualizado = null; 
-
-		log.info("Pedido: ", pedidoActual);
-		
-			
+		Pedido pedidoActualizado = null;
 
 		if (pedidoActual == null) {
 			return new ResponseEntity<>("El registro con el id " + pedidoId + " no existe", HttpStatus.NOT_FOUND);
@@ -106,16 +104,14 @@ public class PedidoController {
 			pedidoActual.setArticulo(pedido.getArticulo());
 			pedidoActual.setDescripcion(pedido.getDescripcion());
 			pedidoActual.setCosto(pedido.getCosto());
-			
 
-			pedidoActualizado = pedidoService. save(pedidoActual);
+			pedidoActualizado = pedidoService.save(pedidoActual);
 
-			return new ResponseEntity<>(pedidoActualizado,
-					HttpStatus.OK);
+			return new ResponseEntity<>(pedidoActualizado, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-		}		
-		
+		}
+
 	}
-	
+
 }
